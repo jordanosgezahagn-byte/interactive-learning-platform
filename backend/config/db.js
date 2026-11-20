@@ -10,6 +10,18 @@ function requiredEnv(name) {
   return value;
 }
 
+function getSslConfig() {
+  const sslEnv = process.env.DB_SSL?.toLowerCase();
+  if (sslEnv === 'false' || sslEnv === '0') {
+    return undefined;
+  }
+
+  return {
+    minVersion: 'TLSv1.2',
+    rejectUnauthorized: true,
+  };
+}
+
 export function getDbPool() {
   if (pool) {
     return pool;
@@ -26,6 +38,7 @@ export function getDbPool() {
     user: requiredEnv('DB_USER'),
     password: process.env.DB_PASSWORD ?? '',
     database: requiredEnv('DB_NAME'),
+    ssl: getSslConfig(),
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
