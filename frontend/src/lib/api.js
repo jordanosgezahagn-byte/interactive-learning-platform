@@ -1,4 +1,5 @@
-export const API_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
+const rawApiUrl = (import.meta.env.VITE_API_URL || '/api').trim().replace(/\/+$/, '');
+export const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 export class ApiError extends Error {
   constructor(message, status, code) {
@@ -10,8 +11,9 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest(path, { body, ...options } = {}) {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const isFormData = body instanceof FormData;
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(`${API_URL}${normalizedPath}`, {
     ...options,
     credentials: 'include',
     headers: {
