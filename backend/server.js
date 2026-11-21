@@ -45,7 +45,6 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
 app.disable('x-powered-by');
 app.use(helmet());
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 app.use(cookieParser());
 app.use('/api/instructor', express.json({ limit: '256kb' }));
 app.use(express.json({ limit: '100kb' }));
