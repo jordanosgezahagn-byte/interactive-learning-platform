@@ -19,7 +19,9 @@ export function getEmailTransport() {
   }
 
   transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
       user: requiredEnv('GMAIL_USER'),
       pass: requiredEnv('GMAIL_APP_PASSWORD')?.replace(/\s+/g, ''),
@@ -45,6 +47,7 @@ export async function sendVerificationEmail(email, name, token) {
       html: `<p>Hi ${escapeHtml(name)},</p><p>Verify your email address by clicking the link below. The link expires in 24 hours.</p><p><a href="${verificationUrl.href}">Verify my email address</a></p><p>If you did not create this account, you can ignore this email.</p>`,
     });
   } catch (cause) {
+    console.error('EMAIL_DELIVERY_FAILED:', cause?.code, cause?.message);
     const error = new Error('Verification email delivery failed.', { cause });
     error.code = 'EMAIL_DELIVERY_FAILED';
     throw error;
