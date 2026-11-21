@@ -33,7 +33,7 @@ export default function Register() {
     setIsSubmitting(true);
 
     try {
-      await apiRequest('/auth/register', {
+      await apiRequest('/api/auth/register', {
         method: 'POST',
         body: {
           name: formData.name,
