@@ -22,7 +22,21 @@ validateRuntimeEnvironment();
 getJwtSecret();
 const port = Number(process.env.PORT ?? 3000);
 const host = process.env.HOST ?? '0.0.0.0';
-const allowedOrigins = parseFrontendOrigins(process.env.FRONTEND_URL);
+const allowedOrigins = Array.from(
+  new Set(
+    [
+      'https://interactive-learning-platform-theta.vercel.app',
+      ...parseFrontendOrigins(process.env.FRONTEND_URL),
+    ].filter(Boolean)
+  )
+);
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
 if (!Number.isInteger(port) || port < 0 || port > 65535) {
   throw new Error('PORT must be an integer between 0 and 65535.');
@@ -30,7 +44,8 @@ if (!Number.isInteger(port) || port < 0 || port > 65535) {
 
 app.disable('x-powered-by');
 app.use(helmet());
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(cookieParser());
 app.use('/api/instructor', express.json({ limit: '256kb' }));
 app.use(express.json({ limit: '100kb' }));
