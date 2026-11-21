@@ -26,7 +26,7 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const { user } = await apiRequest('/auth/login', { method: 'POST', body: { email, password } });
+      const { user } = await apiRequest('/api/auth/login', { method: 'POST', body: { email, password } });
       const dashboardPath = dashboardPathForRole(user.role);
       if (!dashboardPath) {
         setError('This account has an unsupported role. Contact an administrator.');
@@ -48,7 +48,7 @@ export default function Login() {
     setIsResending(true);
 
     try {
-      const { message } = await apiRequest('/auth/resend-verification', {
+      const { message } = await apiRequest('/api/auth/resend-verification', {
         method: 'POST',
         body: { email },
       });
