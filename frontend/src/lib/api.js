@@ -11,9 +11,12 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest(path, { body, ...options } = {}) {
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const finalPath = API_URL.endsWith('/api') && cleanPath.startsWith('/api/')
+    ? cleanPath.slice(4)
+    : cleanPath;
   const isFormData = body instanceof FormData;
-  const response = await fetch(`${API_URL}${normalizedPath}`, {
+  const response = await fetch(`${API_URL}${finalPath}`, {
     ...options,
     credentials: 'include',
     headers: {
